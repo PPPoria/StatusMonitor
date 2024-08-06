@@ -35,9 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initListener() {
         testText.setOnClickListener(v -> {
-            new Thread(()->{
-                throw new RuntimeException("bro");
-            }).start();
+            throw new RuntimeException("main");
         });
     }
 

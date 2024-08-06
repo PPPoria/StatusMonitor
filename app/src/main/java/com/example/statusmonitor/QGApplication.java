@@ -10,6 +10,7 @@ public class QGApplication extends Application {
         super.onCreate();
         QGExceptionHandler handler = QGExceptionHandler.getInstance();
         handler.install(this);
+        handler.avoidCrash();
         handler.setExceptionTip("功能暂时不可用");
     }
 }

@@ -27,11 +27,15 @@ public class QGExceptionHandler implements Thread.UncaughtExceptionHandler {
     private static final DateFormat dateFormat = new SimpleDateFormat("MM-dd-HH-mm-ss");
     private Map<String, String> infoMap = new HashMap<>();
     private Context context;
+    private boolean avoidCrashStatus = false;
     private String tip = "error";
 
     //private私有化修饰，只允许创建一个实例
     private QGExceptionHandler() {
     }
+
+    //====//
+    //
 
     public static QGExceptionHandler getInstance() {
         return instance;
@@ -42,43 +46,55 @@ public class QGExceptionHandler implements Thread.UncaughtExceptionHandler {
         this.context = context;
         defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
-        new Handler(Looper.getMainLooper()).post(()->{
-            for(;;){
+    }
+
+    public void avoidCrash() {
+        avoidCrashStatus = true;
+        new Handler(Looper.getMainLooper()).post(() -> {
+            for (; ; ) {
                 try {
                     Looper.loop();
-                }catch (Throwable e){
-                    Toast.makeText(context, tip, Toast.LENGTH_SHORT).show();
+                } catch (Throwable e) {
+                    handleException(e);
                 }
             }
         });
     }
 
-    public void setExceptionTip(String tip){
+    public void setExceptionTip(String tip) {
         this.tip = tip;
     }
 
+    //
+    //====//
+
     @Override
     public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
-        if (!handleException(e) && defaultHandler != null)
-            defaultHandler.uncaughtException(t, e);
+        handleException(e);
+        if (!avoidCrashStatus) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+            System.exit(0);
+        }
     }
 
-    private boolean handleException(Throwable e) {
-        if (e == null) return false;
+    private void handleException(Throwable e) {
+        if (e == null) return;
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                Toast.makeText(context, tip, Toast.LENGTH_SHORT).show();
-                Looper.loop();
-            }
+        new Thread(() -> {
+            Looper.prepare();
+
+            Toast.makeText(context, tip, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "AvoidCrash", e);
+
+            collectDeviceInfo(context);
+            saveExceptionInfo(e);
+
+            Looper.loop();
         }).start();
-
-        collectDeviceInfo(context);
-        saveExceptionInfo(e);
-
-        return true;
     }
 
     //收集设备信息到map中
