@@ -1,10 +1,8 @@
 package com.example.statusmonitor;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,11 +10,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.monitor.FPSCounter;
+import com.example.monitor.MemoryInfoProvider;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private TextView testText;
-
+    private int which = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +30,25 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        FPSCounter.initFPSCounter();
+        MemoryInfoProvider.initMemoryInfoProvider(this);
+
         initView();
         initListener();
     }
 
+    @SuppressLint("SetTextI18n")
     private void initListener() {
         testText.setOnClickListener(v -> {
-            throw new RuntimeException("main");
+            if(which == 0) {
+                double FPS = FPSCounter.getFPS();
+                testText.setText(String.valueOf(FPS) + "fps");
+            }else if (which == 1){
+                long memory = MemoryInfoProvider.getUsedMemory();
+                testText.setText(String.valueOf(memory) + "Mb");
+            }
+
+            if (which++ == 1) which = 0;
         });
     }
 

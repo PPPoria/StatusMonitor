@@ -22,13 +22,19 @@ import java.util.Map;
 public class QGExceptionHandler implements Thread.UncaughtExceptionHandler {
     private static final String TAG = "QGExemptionHandler";
     private Thread.UncaughtExceptionHandler defaultHandler;
+    private Context context;
     private static final QGExceptionHandler instance = new QGExceptionHandler();
     @SuppressLint("SimpleDateFormat")
     private static final DateFormat dateFormat = new SimpleDateFormat("MM-dd-HH-mm-ss");
+
     private Map<String, String> infoMap = new HashMap<>();
-    private Context context;
+    private boolean uploadStatus = false;
+    private String projectName;
+    private String baseUrl;
+
     private boolean avoidCrashStatus = false;
     private String tip = "error";
+
 
     //private私有化修饰，只允许创建一个实例
     private QGExceptionHandler() {
@@ -62,7 +68,20 @@ public class QGExceptionHandler implements Thread.UncaughtExceptionHandler {
     }
 
     public void setExceptionTip(String tip) {
-        this.tip = tip;
+        if (tip == null) this.tip = "null";
+        else this.tip = tip;
+    }
+
+    public void uploadExceptionTo(String projectName, String baseUrl){
+        uploadStatus = true;
+        if (projectName == null || baseUrl == null) {
+            this.projectName = "null";
+            this.baseUrl = "null";
+        }
+        else {
+            this.projectName = projectName;
+            this.baseUrl = baseUrl;
+        }
     }
 
     //
