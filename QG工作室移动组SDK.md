@@ -3,7 +3,6 @@
 ## 具体工具类以及方法
 
 ### QGExcptionHandler
-**在你的项目中的自定义Application中使用**
 ```java
 //为项目安装QGExcptionHandler
 public static void install(Context context);
