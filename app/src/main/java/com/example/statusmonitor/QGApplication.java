@@ -15,12 +15,12 @@ public class QGApplication extends Application {
         QGExceptionHandler handler = QGExceptionHandler.getInstance();
         handler.install(this);
 
-        handler.avoidCrash();
+        handler.avoidCrash(true);
         handler.setExceptionToast("功能暂时不可用");
 
         FPSCounter.initFPSCounter();
         MemoryInfoProvider.initMemoryInfoProvider(this);
 
-        UploadPresenter.initUploadPresenter("http://47.113.224.195:31110/api/", 114);
+        UploadPresenter.initUploadPresenter(this, "http://47.113.224.195:31108/sdk/", 114);
     }
 }
