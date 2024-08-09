@@ -17,19 +17,19 @@ public class MemoryInfoProvider {
 
     }
 
-    public static long getAvailMemory() {
+    public static int getAvailMemory() {
         if (manager == null) return 0;
         manager.getMemoryInfo(memoryInfo);
-        return memoryInfo.availMem / 1024L / 1024L;
+        return (int)(memoryInfo.availMem / 1024L / 1024L);
     }
 
-    public static long getTotalMemory() {
+    public static int getTotalMemory() {
         if (manager == null) return 0;
         manager.getMemoryInfo(memoryInfo);
-        return memoryInfo.totalMem / 1024L / 1024L;
+        return (int)(memoryInfo.totalMem / 1024L / 1024L);
     }
 
-    public static long getUsedMemory() {
+    public static int getUsedMemory() {
         if (manager == null) return 0;
         return getTotalMemory() - getAvailMemory();
     }

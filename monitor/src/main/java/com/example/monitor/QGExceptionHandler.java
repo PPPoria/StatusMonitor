@@ -28,11 +28,9 @@ public class QGExceptionHandler implements Thread.UncaughtExceptionHandler {
     private static final DateFormat dateFormat = new SimpleDateFormat("MM-dd-HH-mm-ss");
 
     private Map<String, String> infoMap = new HashMap<>();
-    private boolean uploadStatus = false;
-    private String projectName;
-    private String baseUrl;
 
     private boolean avoidCrashStatus = false;
+    private boolean toastUsedStatus = true;
     private String tip = "error";
 
 
@@ -54,8 +52,10 @@ public class QGExceptionHandler implements Thread.UncaughtExceptionHandler {
         Thread.setDefaultUncaughtExceptionHandler(this);
     }
 
-    public void avoidCrash() {
+    //启用防崩溃
+    public void avoidCrash(boolean noToast) {
         avoidCrashStatus = true;
+        toastUsedStatus = !noToast;
         new Handler(Looper.getMainLooper()).post(() -> {
             for (; ; ) {
                 try {
@@ -67,21 +67,14 @@ public class QGExceptionHandler implements Thread.UncaughtExceptionHandler {
         });
     }
 
-    public void setExceptionTip(String tip) {
-        if (tip == null) this.tip = "null";
-        else this.tip = tip;
+    public void avoidCrash() {
+        avoidCrash(false);
     }
 
-    public void uploadExceptionTo(String projectName, String baseUrl){
-        uploadStatus = true;
-        if (projectName == null || baseUrl == null) {
-            this.projectName = "null";
-            this.baseUrl = "null";
-        }
-        else {
-            this.projectName = projectName;
-            this.baseUrl = baseUrl;
-        }
+    //设置异常提示
+    public void setExceptionToast(String toastString) {
+        if (toastString == null) this.tip = "null";
+        else this.tip = toastString;
     }
 
     //
@@ -106,7 +99,9 @@ public class QGExceptionHandler implements Thread.UncaughtExceptionHandler {
         new Thread(() -> {
             Looper.prepare();
 
-            Toast.makeText(context, tip, Toast.LENGTH_SHORT).show();
+            if (toastUsedStatus)
+                Toast.makeText(context, tip, Toast.LENGTH_SHORT).show();
+
             Log.e(TAG, "AvoidCrash", e);
 
             collectDeviceInfo(context);
@@ -153,5 +148,7 @@ public class QGExceptionHandler implements Thread.UncaughtExceptionHandler {
         printWriter.close();
         String result = writer.toString();
         sb.append(result);
+
+        UploadPresenter.uploadExceptionString(sb.toString());
     }
 }

@@ -36,7 +36,7 @@ public class FPSCounter {
         });
     }
 
-    public static double getFPS() {
-        return mFPS;
+    public static int getFPS() {
+        return (int) mFPS;
     }
 }
