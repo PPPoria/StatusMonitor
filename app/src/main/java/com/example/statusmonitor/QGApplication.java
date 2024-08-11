@@ -19,7 +19,7 @@ public class QGApplication extends Application {
         handler.setExceptionToast("功能暂时不可用");
 
         FPSCounter.initFPSCounter();
-        MemoryInfoProvider.initMemoryInfoProvider(this);
+        MemoryInfoProvider.initMemoryInfoProvider();
 
         UploadPresenter.initUploadPresenter(this, "http://47.113.224.195:31108/sdk/", 114);
     }
