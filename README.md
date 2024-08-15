@@ -1,2 +1,3 @@
-# 依赖下载
-# https://github.com/PPPoria/StatusMonitor/releases/download/SDK_v1.0/QGSDK.aar
+# QG工作室移动组用
+## 源码里面包含有说明书
+## 依赖请去release下载aar文件
